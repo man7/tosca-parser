@@ -111,6 +111,194 @@ node_types:
           capability: tosca.capabilities.nfv.Forwarder
           relationship: tosca.relationships.nfv.ForwardsTo
 
+
+
+  tosca.nodes.network.FloatingIP:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA FloatingIP node represents a floating IP that can associate to a Port.
+    properties:
+      floating_network:
+        type: string
+        required: true
+      floating_ip_address:
+        type: string
+        required: false
+      port_id:
+        type: string
+        required: false
+    requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+          node: tosca.nodes.network.Port
+
+  tosca.nodes.network.IKEPolicy:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA IKEPolicy  represents a vpn resource that can associate to a vpn s2s.
+    properties:
+      description:
+        type: string
+        required: false
+      auth_algorithm:
+        type: string
+        required: false
+        default: sha1
+      encryption_algorithm:
+        type: string
+        required: false
+        default: aes-128
+      ike_version:
+        type: string
+        required: false
+        default: v1
+      name:
+        type: string
+        required: true
+      pfs:
+        type: string
+        required: false
+        default: group5
+      phase1_negotiation_mode:
+        type: string
+        required: false
+        default: main
+      lifetime:
+        type: string
+        required: false
+        default:
+          units: seconds
+          value: 3600
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+
+  tosca.nodes.network.IPsecPolicy:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA IPsecPolicy  represents a vpn resource that can associate to a vpn s2s.
+    properties:
+      description:
+        type: string
+        required: false
+      auth_algorithm:
+        type: string
+        required: false
+        default: sha1
+      encryption_algorithm:
+        type: string
+        required: false
+        default: aes-128
+      encapsulation_mode:
+        type: string
+        required: false
+        default: tunnel
+      name:
+        type: string
+        required: true
+      pfs:
+        type: string
+        required: false
+        default: group5
+      transform_protocol:
+        type: string
+        required: false
+        default: esp
+      lifetime:
+        type: string
+        required: false
+        default:
+          units: seconds
+          value: 3600
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+
+  tosca.nodes.network.VPNService:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA VPNService represents a vpn resource that can associate to a vpn s2s.
+    properties:
+      description:
+        type: string
+        required: false
+      admin_state_up: 
+        type: boolean
+        default: True
+        required: false
+      name:
+        type: string
+        required: true
+      router:
+        type: string
+        required: true
+      subnet:
+        type: string
+        required: false 
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+
+  tosca.nodes.network.IPsecSiteConnection:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA IPsecSiteConnection represents a IPsecSiteConnection resource that is  associated to a VPNService, IKE and IPSEC policy .
+    properties:
+      description:
+        type: string
+        required: false
+      admin_state_up:
+        type: boolean
+        default: True
+        required: false
+      ikepolicy_id:
+        type: string
+        required: false
+      ipsecpolicy_id:
+        type: string
+        required: false
+      name:
+        type: string
+        required: true
+      vpnservice_id:
+        type: false
+        required: false
+      peer_id:
+        type: string
+        required: true
+      peer_address:
+        type: string
+        required: true
+      psk:
+        type: string
+        required: true
+      initiator:
+        type: string
+        default: bi-directional
+        required: false
+      mtu: 
+        type: integer
+        default: 1500
+        required: false 
+      peer_cidrs:
+        type: list
+        required: false
+      dpd:
+        type: string
+        required: false
+        default:
+          action: hold
+          interval: 30
+          timeout: 120
+
+    requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+          node: tosca.nodes.network.IPsecPolicy
+          node: tosca.nodes.network.IKEPolicy
+          node: tosca.nodes.network.VPNService
 ##########################################################################
 # Relationship Type.
 # A Relationship Type is a reusable entity that defines the type of one
